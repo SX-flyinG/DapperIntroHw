@@ -12,6 +12,8 @@ namespace DapperIntroHw
             string connectionString = "Data Source=dog_shelter.db";
             var context = new DogContext("Data Source=dog_shelter.db");
             var service = new DogService(context);
+            var adopterService = new AdopterService(context);
+
 
 
             using (var connection = new SqliteConnection(connectionString))
@@ -25,7 +27,14 @@ namespace DapperIntroHw
         Age INTEGER NOT NULL,
         Breed TEXT NOT NULL,
         IsAdopted INTEGER NOT NULL DEFAULT 0
-    );";
+    );
+    CREATE TABLE IF NOT EXISTS Adopters (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+        Name TEXT NOT NULL,
+        Phone TEXT NOT NULL
+    );
+
+    ALTER TABLE Dogs ADD COLUMN AdopterId INTEGER REFERENCES Adopters(Id);";
 
                 using var command = new SqliteCommand(tableCommand, connection);
                 command.ExecuteNonQuery();
@@ -42,6 +51,9 @@ namespace DapperIntroHw
                 Console.WriteLine("7. Пошук за породою");
                 Console.WriteLine("8. Оновити дані собаки");
                 Console.WriteLine("9. Вихід");
+                Console.WriteLine("10. Додати опікуна");
+                Console.WriteLine("11. Показати всіх опікунів");
+                Console.WriteLine("12. Прилаштувати собаку");
                 Console.Write("> Оберіть опцію: ");
 
                 var input = Console.ReadLine();
@@ -100,6 +112,34 @@ namespace DapperIntroHw
 
                     case "9":
                         return;
+
+                    case "10":
+                        Console.Write("Ім’я опікуна: ");
+                        var adopterName = Console.ReadLine()!;
+                        Console.Write("Телефон: ");
+                        var adopterPhone = Console.ReadLine()!;
+                        adopterService.AddAdopter(new Adopter { Name = adopterName, Phone = adopterPhone });
+                        break;
+
+                    case "11":
+                        adopterService.ShowAllAdopters();
+                        break;
+
+                    case "12":
+                        Console.Write("ID собаки: ");
+                        int adoptDogId = int.Parse(Console.ReadLine()!);
+                        Console.Write("ID опікуна: ");
+                        int adoptAdopterId = int.Parse(Console.ReadLine()!);
+
+                        if (!adopterService.AdopterExists(adoptAdopterId))
+                        {
+                            Console.WriteLine("Опікуна не знайдено.");
+                            break;
+                        }
+
+                        service.AdoptDog(adoptDogId, adoptAdopterId);
+                        break;
+
                 }
             }
         }

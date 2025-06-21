@@ -1,4 +1,5 @@
-﻿using DapperIntroHw.Data;
+﻿using Dapper;
+using DapperIntroHw.Data;
 using DapperIntroHw.Entities;
 using System;
 using System.Collections.Generic;
@@ -109,6 +110,16 @@ namespace DapperIntroHw.Services
         private void PrintDog(Dog dog)
         {
             Console.WriteLine($"[{dog.Id}] {dog.Name}, {dog.Age} років, {dog.Breed}, {(dog.IsAdopted ? "Прилаштований" : "В притулку")}");
+        }
+
+        public void AdoptDog(int dogId, int adopterId)
+        {
+            var sql = @"UPDATE Dogs SET IsAdopted = 1, AdopterId = @AdopterId WHERE Id = @Id";
+            using var conn = _context.CreateConnection();
+            var result = conn.Execute(sql, new { Id = dogId, AdopterId = adopterId });
+
+            if (result > 0) Console.WriteLine("Собаку прилаштовано!");
+            else Console.WriteLine("Не вдалося знайти собаку.");
         }
     }
 }
