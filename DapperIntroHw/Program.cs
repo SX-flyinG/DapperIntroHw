@@ -54,6 +54,8 @@ namespace DapperIntroHw
                 Console.WriteLine("10. Додати опікуна");
                 Console.WriteLine("11. Показати всіх опікунів");
                 Console.WriteLine("12. Прилаштувати собаку");
+                Console.WriteLine("13. Додати 20 випадкових собак");
+
                 Console.Write("> Оберіть опцію: ");
 
                 var input = Console.ReadLine();
@@ -138,6 +140,9 @@ namespace DapperIntroHw
                         }
 
                         service.AdoptDog(adoptDogId, adoptAdopterId);
+                        break;
+                    case "13":
+                        service.InsertTestDogs();
                         break;
 
                 }
